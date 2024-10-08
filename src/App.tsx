@@ -33,7 +33,7 @@ const QuestionPage = () => {
       <div className="absolute h-60 top-0 left-0 w-full bg-gradient-to-b from-blue-500/20 to-white" />
 
       {/* Progress bar */}
-      <div className="max-w-[38rem] w-full mb-14 flex flex-col gap-y-2 z-50">
+      <div className="max-w-[30rem] lg:max-w-[38rem] w-full mb-14 flex flex-col gap-y-2 z-50">
         <div className="w-full flex items-center justify-between">
           <span className="text-xs font-medium text-slate-950">
             1 of 10 Questions
@@ -48,7 +48,7 @@ const QuestionPage = () => {
         ⏱️ 00:01:30
       </div>
 
-      <div className="max-w-[38rem] h-auto flex flex-col gap-y-6 z-50">
+      <div className="max-w-[30rem] h-auto flex flex-col gap-y-6 z-50 lg:max-w-[38rem]">
         {/* Button for question list */}
         <button className="w-[10rem] flex items-center gap-x-3 text-blue-700 rounded bg-blue-50 px-3 py-2 text-sm border border-blue-700 shadow-md">
           <CiBoxList className="w-6 h-6" />
