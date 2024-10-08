@@ -18,7 +18,10 @@ const QuestionPage = () => {
 
   return (
     <main className="h-screen w-full bg-white flex items-center justify-center">
-      <div className="max-w-[38rem] h-auto flex flex-col gap-y-6">
+      {/* Background gradient */}
+      <div className="absolute h-60 top-0 left-0 w-full bg-gradient-to-b from-blue-500/20 to-white" />
+
+      <div className="max-w-[38rem] h-auto flex flex-col gap-y-6 z-50">
         {/* Button for question list */}
         <button className="w-[10rem] flex items-center gap-x-3 text-blue-700 rounded bg-blue-50 px-3 py-2 text-sm border border-blue-700 shadow-md">
           <CiBoxList className="w-6 h-6" />
