@@ -1,9 +1,15 @@
+import { QueryClient, QueryClientProvider } from "react-query";
+
 import QuestionPage from "./components/QuestionPage";
+
+const queryClient = new QueryClient();
 
 function App() {
   return (
     <>
-      <QuestionPage />
+      <QueryClientProvider client={queryClient}>
+        <QuestionPage />
+      </QueryClientProvider>
     </>
   );
 }

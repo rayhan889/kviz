@@ -1,8 +1,22 @@
+import { useQuery } from "react-query";
 import { CiBoxList } from "react-icons/ci";
-
 import ProgressBar from "./ui/Progressbar";
 
+const API_URL =
+  "https://opentdb.com/api.php?amount=10&category=11&difficulty=easy";
+
 export default function QuestionPage() {
+  const { data, isLoading, error } = useQuery("questions", async () => {
+    const res = await fetch(API_URL);
+    const data = await res.json();
+    return data;
+  });
+
+  if (isLoading) return <div>Loading...</div>;
+  if (error) return <div>Error</div>;
+
+  if (!isLoading) console.log(data);
+
   const options = [
     {
       value: "A",
@@ -59,7 +73,7 @@ export default function QuestionPage() {
           {options.map(option => (
             <button
               value={option.value}
-              id={option.value}
+              key={option.value}
               className="w-full rounded-lg p-6 text-slate-950 text-base border border-slate-300 text-start"
             >
               {option.value}
