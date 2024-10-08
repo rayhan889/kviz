@@ -24,10 +24,10 @@ function decodeHTMLEntities(text: string) {
 }
 
 export default function QuestionPage() {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [currentQuestion, setCurrentQuestion] = useState(1);
+  const [currentIndex, setCurrentIndex] = useState<number>(0);
+  const [questions, setCurrentQuestions] = useState<Question[]>([]);
 
-  const { data, isLoading, error } = useQuery(
+  const { isLoading, error } = useQuery(
     "questions",
     async () => {
       const res = await fetch(API_URL);
@@ -36,7 +36,7 @@ export default function QuestionPage() {
         ...q,
         question: decodeHTMLEntities(q.question),
       }));
-      return data;
+      setCurrentQuestions(data.results);
     },
     {
       staleTime: API_CATCH_TIME,
@@ -44,34 +44,34 @@ export default function QuestionPage() {
     }
   );
 
+  function handleNextQuestion() {
+    if (currentIndex < questions.length - 1) {
+      setCurrentIndex(prev => prev + 1);
+    }
+  }
+
   if (isLoading) return <div>Loading...</div>;
   if (error) return <div>Error</div>;
 
-  if (!isLoading) console.log(data);
+  const currentQuestion = questions[currentIndex];
 
   const options = [
     {
-      value: "A",
+      name: "Yes",
+      value: "true",
     },
     {
-      value: "B",
-    },
-    {
-      value: "C",
-    },
-    {
-      value: "D",
+      name: "No",
+      value: "false",
     },
   ];
-
-  const firstQuestion = data?.results[0];
 
   return (
     <main className="h-screen w-full bg-white flex flex-col items-center justify-center">
       {/* Background gradient */}
       <div className="absolute h-60 top-0 left-0 w-full bg-gradient-to-b from-blue-500/20 to-white" />
 
-      {!isLoading && (
+      {!isLoading && currentQuestion && (
         <>
           {/* Progress bar */}
           <div className="max-w-[30rem] lg:max-w-[38rem] w-full mb-14 flex flex-col gap-y-2 z-50">
@@ -97,20 +97,21 @@ export default function QuestionPage() {
             </button>
             {/* Question */}
             <div className="flex justify-start gap-x-2">
-              <span>{currentQuestion}. </span>
+              <span>{currentIndex + 1}. </span>
               <p className="text-base text-slate-700 line-clamp-3">
-                {firstQuestion?.question}
+                {currentQuestion?.question}
               </p>
             </div>
             {/* Options */}
             <div className="flex flex-col gap-y-3">
-              {options.map(option => (
+              {options.map((opt, idx) => (
                 <button
-                  value={option.value}
-                  key={option.value}
+                  key={idx}
+                  value={opt.value}
                   className="w-full rounded-lg p-6 text-slate-950 text-base border border-slate-300 text-start"
+                  onClick={handleNextQuestion}
                 >
-                  {option.value}
+                  {opt.name}
                 </button>
               ))}
             </div>
