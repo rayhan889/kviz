@@ -3,7 +3,7 @@ import { useQuery } from "react-query";
 import { CiBoxList } from "react-icons/ci";
 import ProgressBar from "./ui/Progressbar";
 
-interface Question {
+export interface Question {
   category: string;
   correct_answer: string;
   difficulty: string;
