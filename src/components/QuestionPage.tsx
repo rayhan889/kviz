@@ -4,6 +4,7 @@ import { useQuery } from "react-query";
 import ProgressBar from "./ui/Progressbar";
 import CountDown from "./ui/CountDown";
 import QuestionBox from "./ui/QuestionBox";
+import ResultBox from "./ui/ResultBox";
 
 export interface Question {
   category: string;
@@ -32,7 +33,7 @@ export default function QuestionPage() {
   const [questions, setCurrentQuestions] = useState<Question[]>([]);
   const [countRightAnswers, setCountRightAnswers] = useState<number>(0);
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
-  const [timesUp, setTimesUp] = useState<boolean>(false);
+  const [timesUp, setTimesUp] = useState<boolean>(true);
 
   const currentQuestion = questions[currentIndex];
   const indexStartByOne = currentIndex + 1;
@@ -122,7 +123,8 @@ export default function QuestionPage() {
           )}
         </>
       ) : (
-        <h1>woi</h1>
+        // Result box
+        <ResultBox />
       )}
     </main>
   );
