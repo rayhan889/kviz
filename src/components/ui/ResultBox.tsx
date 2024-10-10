@@ -2,8 +2,15 @@ import { GoArrowLeft } from "react-icons/go";
 import { IoIosStats } from "react-icons/io";
 import { FiXCircle, FiCheckCircle, FiList } from "react-icons/fi";
 import { LuPencilLine } from "react-icons/lu";
+import React from "react";
 
-const ResultBox = () => {
+interface ResultBoxProps {
+  setTimesUp: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+const ResultBox: React.FC<ResultBoxProps> = ({
+  setTimesUp,
+}: ResultBoxProps) => {
   const stats = [
     {
       slug: "correct_answer",
@@ -70,7 +77,10 @@ const ResultBox = () => {
       </div>
 
       {/* Try again button */}
-      <button className="w-full bg-blue-600 text-white py-4 rounded-lg shadow-lg transition duration-300 ease-in-out hover:shadow-xl hover:shadow-blue-300/30 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 active:shadow-inner">
+      <button
+        onClick={() => setTimesUp(false)}
+        className="w-full bg-blue-600 text-white py-4 rounded-lg shadow-lg transition duration-300 ease-in-out hover:shadow-xl hover:shadow-blue-300/30 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 active:shadow-inner"
+      >
         Try Again
       </button>
     </div>

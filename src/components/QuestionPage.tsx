@@ -124,7 +124,7 @@ export default function QuestionPage() {
         </>
       ) : (
         // Result box
-        <ResultBox />
+        <ResultBox setTimesUp={setTimesUp} />
       )}
     </main>
   );
