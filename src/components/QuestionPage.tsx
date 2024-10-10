@@ -32,6 +32,7 @@ export default function QuestionPage() {
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
 
   const currentQuestion = questions[currentIndex];
+  const indexStartByOne = currentIndex + 1;
 
   const { isLoading, error } = useQuery(
     "questions",
@@ -94,18 +95,18 @@ export default function QuestionPage() {
           <div className="max-w-[30rem] lg:max-w-[38rem] w-full mb-14 flex flex-col gap-y-2 z-50">
             <div className="w-full flex items-center justify-between">
               <span className="text-xs font-medium text-slate-950">
-                {currentIndex + 1} of {questions.length} Questions
+                {indexStartByOne} of {questions.length} Questions
               </span>
               <span className="text-xs text-slate-950">
-                {currentIndex + 1 < 5
+                {indexStartByOne < 5
                   ? "There's still lot to do mate😉"
-                  : currentIndex + 1 > 7
+                  : indexStartByOne > 7
                   ? "Nearly there😱"
                   : "On ur halfway!🙂"}
               </span>
             </div>
             <ProgressBar
-              completed={((currentIndex + 1) / questions.length) * 100}
+              completed={(indexStartByOne / questions.length) * 100}
             />
           </div>
 
