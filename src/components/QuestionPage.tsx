@@ -28,6 +28,10 @@ export default function QuestionPage() {
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [questions, setCurrentQuestions] = useState<Question[]>([]);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [countRightAnswers, setCountRightAnswers] = useState<number>(0);
+  const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
+
+  const currentQuestion = questions[currentIndex];
 
   const { isLoading, error } = useQuery(
     "questions",
@@ -49,22 +53,33 @@ export default function QuestionPage() {
   function handleNextQuestion() {
     if (currentIndex < questions.length - 1) {
       setCurrentIndex(prev => prev + 1);
+      setSelectedAnswer(null);
     }
+  }
+
+  function handleCheckAnswer(ans: string) {
+    setSelectedAnswer(ans);
+
+    if (currentIndex > 0) {
+      if (currentQuestion.correct_answer == ans) {
+        setCountRightAnswers(prev => prev + 1);
+      }
+    }
+
+    setTimeout(handleNextQuestion, 1000);
   }
 
   if (isLoading) return <div>Loading...</div>;
   if (error) return <div>Error</div>;
 
-  const currentQuestion = questions[currentIndex];
-
   const options = [
     {
       name: "Yes",
-      value: "true",
+      value: "True",
     },
     {
       name: "No",
-      value: "false",
+      value: "False",
     },
   ];
 
@@ -79,15 +94,17 @@ export default function QuestionPage() {
           <div className="max-w-[30rem] lg:max-w-[38rem] w-full mb-14 flex flex-col gap-y-2 z-50">
             <div className="w-full flex items-center justify-between">
               <span className="text-xs font-medium text-slate-950">
-                1 of 10 Questions
+                {currentIndex + 1} of {questions.length} Questions
               </span>
               <span className="text-xs text-slate-950">Nearly there😱</span>
             </div>
-            <ProgressBar completed={50} />
+            <ProgressBar
+              completed={((currentIndex + 1) / questions.length) * 100}
+            />
           </div>
 
           {/* Timer */}
-          <div className="text-slate-950 text-base font-medium mb-10">
+          <div className="text-slate-950 text-base font-medium mb-10 z-50">
             ⏱️ 00:01:30
           </div>
 
@@ -114,14 +131,21 @@ export default function QuestionPage() {
                 {currentQuestion?.question}
               </p>
             </div>
+
             {/* Options */}
             <div className="flex flex-col gap-y-3">
               {options.map((opt, idx) => (
                 <button
                   key={idx}
                   value={opt.value}
-                  className="w-full rounded-lg p-6 text-slate-950 text-base border border-slate-300 text-start"
-                  onClick={handleNextQuestion}
+                  className={`w-full rounded-lg p-6 text-slate-950 text-base border text-start ${
+                    selectedAnswer === opt.value
+                      ? opt.value === currentQuestion.correct_answer
+                        ? "bg-emerald-50 border-emerald-500"
+                        : "bg-red-50 border-red-300"
+                      : "border-slate-300"
+                  }`}
+                  onClick={() => handleCheckAnswer(opt.value)}
                 >
                   {opt.name}
                 </button>
