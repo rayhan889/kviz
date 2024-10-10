@@ -27,10 +27,12 @@ function decodeHTMLEntities(text: string) {
 }
 
 export default function QuestionPage() {
+  const [startQuizSession, setStartQuestionSession] = useState<boolean>(true);
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [questions, setCurrentQuestions] = useState<Question[]>([]);
   const [countRightAnswers, setCountRightAnswers] = useState<number>(0);
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
+  const [timesUp, setTimesUp] = useState<boolean>(false);
 
   const currentQuestion = questions[currentIndex];
   const indexStartByOne = currentIndex + 1;
@@ -79,39 +81,48 @@ export default function QuestionPage() {
       {/* Background gradient */}
       <div className="absolute h-60 top-0 left-0 w-full bg-gradient-to-b from-blue-500/20 to-white" />
 
-      {!isLoading && currentQuestion && (
+      {startQuizSession && !timesUp ? (
         <>
-          {/* Progress bar */}
-          <div className="max-w-[30rem] lg:max-w-[38rem] w-full mb-14 flex flex-col gap-y-2 z-50">
-            <div className="w-full flex items-center justify-between">
-              <span className="text-xs font-medium text-slate-950">
-                {indexStartByOne} of {questions.length} Questions
-              </span>
-              <span className="text-xs text-slate-950">
-                {indexStartByOne < 5
-                  ? "There's still lot to do mate😉"
-                  : indexStartByOne > 7
-                  ? "Nearly there😱"
-                  : "On ur halfway!🙂"}
-              </span>
-            </div>
-            <ProgressBar
-              completed={(indexStartByOne / questions.length) * 100}
-            />
-          </div>
+          {!isLoading && currentQuestion && (
+            <>
+              {/* Progress bar */}
+              <div className="max-w-[30rem] lg:max-w-[38rem] w-full mb-14 flex flex-col gap-y-2 z-50">
+                <div className="w-full flex items-center justify-between">
+                  <span className="text-xs font-medium text-slate-950">
+                    {indexStartByOne} of {questions.length} Questions
+                  </span>
+                  <span className="text-xs text-slate-950">
+                    {indexStartByOne < 5
+                      ? "There's still lot to do mate😉"
+                      : indexStartByOne > 7
+                      ? "Nearly there😱"
+                      : "On ur halfway!🙂"}
+                  </span>
+                </div>
+                <ProgressBar
+                  completed={(indexStartByOne / questions.length) * 100}
+                />
+              </div>
 
-          {/* Timer */}
-          <CountDown countdown_duration_ms={COUNTDOWN_DURATION_MS} />
+              {/* Timer */}
+              <CountDown
+                countdown_duration_ms={COUNTDOWN_DURATION_MS}
+                setTimesUp={setTimesUp}
+              />
 
-          {/* Question Box */}
-          <QuestionBox
-            currentIndex={currentIndex}
-            currentQuestion={currentQuestion}
-            questions={questions}
-            handleCheckAnswer={handleCheckAnswer}
-            selectedAnswer={selectedAnswer}
-          />
+              {/* Question Box */}
+              <QuestionBox
+                currentIndex={currentIndex}
+                currentQuestion={currentQuestion}
+                questions={questions}
+                handleCheckAnswer={handleCheckAnswer}
+                selectedAnswer={selectedAnswer}
+              />
+            </>
+          )}
         </>
+      ) : (
+        <h1>woi</h1>
       )}
     </main>
   );

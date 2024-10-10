@@ -1,15 +1,19 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 
 interface TimeLeft {
   minutes: number;
   seconds: number;
 }
 
-export default function CountDown({
-  countdown_duration_ms,
-}: {
+interface CountDownProps {
   countdown_duration_ms: number;
-}) {
+  setTimesUp: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+const CountDown: React.FC<CountDownProps> = ({
+  countdown_duration_ms,
+  setTimesUp,
+}: CountDownProps) => {
   const [endTime] = useState(() => Date.now() + countdown_duration_ms);
 
   function calculateTimeLeft(): TimeLeft {
@@ -40,6 +44,10 @@ export default function CountDown({
   const formatTime = (value: number): string =>
     value.toString().padStart(2, "0");
 
+  if (timeLeft.minutes === 0 && timeLeft.seconds === 0) {
+    setTimesUp(true);
+  }
+
   return (
     <div className="text-slate-950 text-base font-medium mb-10 z-50">
       {timeLeft.minutes === 0 && timeLeft.seconds === 0 ? (
@@ -51,4 +59,6 @@ export default function CountDown({
       )}
     </div>
   );
-}
+};
+
+export default CountDown;
