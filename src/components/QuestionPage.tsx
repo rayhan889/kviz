@@ -96,7 +96,13 @@ export default function QuestionPage() {
               <span className="text-xs font-medium text-slate-950">
                 {currentIndex + 1} of {questions.length} Questions
               </span>
-              <span className="text-xs text-slate-950">Nearly there😱</span>
+              <span className="text-xs text-slate-950">
+                {currentIndex + 1 < 5
+                  ? "There's still lot to do mate😉"
+                  : currentIndex + 1 > 7
+                  ? "Nearly there😱"
+                  : "On ur halfway!🙂"}
+              </span>
             </div>
             <ProgressBar
               completed={((currentIndex + 1) / questions.length) * 100}
