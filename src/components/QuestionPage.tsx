@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery } from "react-query";
 
 import ProgressBar from "./ui/Progressbar";
@@ -19,7 +19,7 @@ const API_URL =
   "https://opentdb.com/api.php?amount=10&category=11&difficulty=easy&type=boolean";
 
 const API_CATCH_TIME = 5 * 60 * 1000;
-const COUNTDOWN_DURATION_MS = 90000;
+const COUNTDOWN_DURATION_MS = 25000;
 
 function decodeHTMLEntities(text: string) {
   const textArea = document.createElement("textarea");
@@ -33,7 +33,7 @@ export default function QuestionPage() {
   const [questions, setCurrentQuestions] = useState<Question[]>([]);
   const [countRightAnswers, setCountRightAnswers] = useState<number>(0);
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
-  const [timesUp, setTimesUp] = useState<boolean>(true);
+  const [timesUp, setTimesUp] = useState<boolean>(false);
 
   const currentQuestion = questions[currentIndex];
   const indexStartByOne = currentIndex + 1;
@@ -55,8 +55,17 @@ export default function QuestionPage() {
     }
   );
 
+  useEffect(() => {
+    if (!startQuizSession || timesUp || currentIndex > questions.length - 1) {
+      setCurrentIndex(0);
+      setCountRightAnswers(0);
+      setSelectedAnswer(null);
+      setTimesUp(true);
+    }
+  }, [startQuizSession, timesUp, currentIndex, questions.length]);
+
   function handleNextQuestion() {
-    if (currentIndex < questions.length - 1) {
+    if (currentIndex < questions.length) {
       setCurrentIndex(prev => prev + 1);
       setSelectedAnswer(null);
     }
@@ -82,7 +91,10 @@ export default function QuestionPage() {
       {/* Background gradient */}
       <div className="absolute h-60 top-0 left-0 w-full bg-gradient-to-b from-blue-500/20 to-white" />
 
-      {startQuizSession && !timesUp ? (
+      {!startQuizSession || timesUp || currentIndex > questions.length - 1 ? (
+        // Result box
+        <ResultBox setTimesUp={setTimesUp} />
+      ) : (
         <>
           {!isLoading && currentQuestion && (
             <>
@@ -122,9 +134,6 @@ export default function QuestionPage() {
             </>
           )}
         </>
-      ) : (
-        // Result box
-        <ResultBox setTimesUp={setTimesUp} />
       )}
     </main>
   );
