@@ -3,6 +3,7 @@ import { useQuery } from "react-query";
 import { CiBoxList } from "react-icons/ci";
 import ProgressBar from "./ui/Progressbar";
 import QuestionListModal from "./ui/QuestionListModal";
+import CountDown from "./ui/CountDown";
 
 export interface Question {
   category: string;
@@ -111,9 +112,7 @@ export default function QuestionPage() {
           </div>
 
           {/* Timer */}
-          <div className="text-slate-950 text-base font-medium mb-10 z-50">
-            ⏱️ 00:01:30
-          </div>
+          <CountDown countdown_duration_ms={90000} />
 
           <div className="max-w-[30rem] w-full h-auto flex flex-col gap-y-6 z-50 lg:max-w-[38rem]">
             {/* Button for question list */}
