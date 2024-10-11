@@ -1,8 +1,16 @@
 import { GoArrowLeft } from "react-icons/go";
-import { IoIosStats } from "react-icons/io";
-import { FiXCircle, FiCheckCircle, FiList, FiClock } from "react-icons/fi";
+import {
+  FiXCircle,
+  FiCheckCircle,
+  FiList,
+  FiClock,
+  FiChevronUp,
+  FiChevronDown,
+  FiKey,
+  FiBarChart,
+} from "react-icons/fi";
 import { LuPencilLine } from "react-icons/lu";
-import React from "react";
+import React, { useState } from "react";
 
 interface ResultBoxProps {
   startNewQuizSession: () => void;
@@ -19,6 +27,8 @@ const ResultBox: React.FC<ResultBoxProps> = ({
   total_questions_done,
   timeSpent,
 }: ResultBoxProps) => {
+  const [collapseStats, setCollapseStats] = useState<boolean>(false);
+  const [collapseKeyAnswer, setCollapseKeyAnswer] = useState<boolean>(false);
   const wrong_answer = total_questions_done - correct_answer;
 
   const stats = [
@@ -54,6 +64,16 @@ const ResultBox: React.FC<ResultBoxProps> = ({
     },
   ];
 
+  function handleCollapseStats() {
+    setCollapseStats(prev => !prev);
+    setCollapseKeyAnswer(false);
+  }
+
+  function handleCollapseKeyAnswer() {
+    setCollapseKeyAnswer(prev => !prev);
+    setCollapseStats(false);
+  }
+
   return (
     <div className="max-w-[30rem] w-full h-auto flex flex-col gap-y-6 z-50 lg:max-w-[38rem]">
       {/* Back button */}
@@ -66,50 +86,135 @@ const ResultBox: React.FC<ResultBoxProps> = ({
       <div className="flex w-auto mx-auto flex-col items-center gap-y-3">
         {correct_answer >= 5 ? (
           <>
-            <a className="text-5xl">👏</a>
+            <a className="text-5xl animate-bounce">👏</a>
             <span className="font-medium text-slate-950">Not Bad Bro!</span>
           </>
         ) : correct_answer < 5 ? (
           <>
-            <a className="text-5xl">😥</a>
+            <a className="text-5xl animate-bounce">😥</a>
             <span className="font-medium text-slate-950">
               Well, Maybe That Was Difficult
             </span>
           </>
         ) : correct_answer > 8 ? (
           <>
-            <a className="text-5xl">🎊</a>
+            <a className="text-5xl animate-bounce">🎊</a>
             <span className="font-medium text-slate-950">Good Job Mate!!</span>
           </>
         ) : null}
       </div>
 
-      {/* Result box */}
-      <div className="w-full rounded-lg border border-slate-300 h-auto flex flex-col relative">
-        <div className="absolute w-full -z-10 px-6 py-4 flex items-center gap-x-2 bg-slate-100 border-b border-b-slate-300 text-slate-950">
-          <IoIosStats className="h-5 w-5" />
-          <span className="font-medium">Score & Stats</span>
+      <div
+        className={`w-full flex flex-col ${
+          collapseKeyAnswer ? "mb-1" : "mb-14"
+        }`}
+      >
+        {/* Score & Stats */}
+        <div
+          className={`w-full rounded-lg mb-8 ${
+            collapseStats && "border border-slate-300"
+          } h-auto flex flex-col relative`}
+        >
+          <div
+            className={`absolute w-full px-6 py-4 flex items-center justify-between bg-slate-100 text-slate-950 ${
+              !collapseStats
+                ? "rounded-lg border border-slate-300"
+                : "rounded-t-lg border-b border-b-slate-300"
+            }`}
+          >
+            <div className="flex items-center gap-x-2">
+              <FiBarChart className="h-5 w-5" />
+              <span className="font-medium">Score & Stats</span>
+            </div>
+            {!collapseStats ? (
+              <FiChevronDown
+                className="h-5 w-5 cursor-pointer"
+                onClick={handleCollapseStats}
+              />
+            ) : (
+              <FiChevronUp
+                className="h-5 w-5 cursor-pointer"
+                onClick={handleCollapseStats}
+              />
+            )}
+          </div>
+          {collapseStats && (
+            <div className="p-5 mt-14 grid grid-cols-2 gap-3">
+              {stats.map((stat, idx) => {
+                const lastIndex = stats.length - 1;
+                return (
+                  <div
+                    key={`${stat.slug}`}
+                    className={`rounded border border-slate-300 p-3 flex flex-col justify-start gap-y-5 ${
+                      idx === lastIndex && "col-span-2"
+                    }`}
+                  >
+                    <stat.icon className="h-5 w-5 text-blue-600" />
+                    <div className="flex flex-col justify-start gap-y-2">
+                      <a className="text-xs text-slate-700">{stat.name}</a>
+                      <span className="text-base font-medium text-slate-950">
+                        {stat.value}
+                      </span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
         </div>
-        <div className="p-5 mt-14 grid grid-cols-2 gap-3">
-          {stats.map((stat, idx) => {
-            const lastIndex = stats.length - 1;
-            return (
-              <div
-                key={`${stat.slug}`}
-                className={`rounded border border-slate-300 p-3 flex flex-col justify-start gap-y-5 ${
-                  idx === lastIndex && "col-span-2"
-                }`}
-              >
-                <stat.icon className="h-5 w-5 text-blue-600" />
-                <div className="flex flex-col justify-start gap-y-2">
-                  <a className="text-xs text-slate-700">{stat.name}</a>
-                  <span className="text-base font-medium text-slate-950">
-                    {stat.value}
-                  </span>
-                </div>
-              </div>
-            );
-          })}
+
+        {/* Key Answer */}
+        <div
+          className={`w-full rounded-lg mt-20 ${
+            collapseKeyAnswer && "border border-slate-300"
+          } h-auto flex flex-col relative ${collapseStats && "mt-6"}`}
+        >
+          <div
+            className={`absolute w-full px-6 py-4 flex items-center justify-between bg-slate-100 text-slate-950 ${
+              !collapseKeyAnswer
+                ? "rounded-lg border border-slate-300"
+                : "rounded-t-lg border-b border-b-slate-300"
+            }`}
+          >
+            <div className="flex items-center gap-x-2">
+              <FiKey className="h-5 w-5" />
+              <span className="font-medium">Key Answer</span>
+            </div>
+            {!collapseKeyAnswer ? (
+              <FiChevronDown
+                className="h-5 w-5 cursor-pointer"
+                onClick={handleCollapseKeyAnswer}
+              />
+            ) : (
+              <FiChevronUp
+                className="h-5 w-5 cursor-pointer"
+                onClick={handleCollapseKeyAnswer}
+              />
+            )}
+          </div>
+          {collapseKeyAnswer && (
+            <div className="p-5 mt-14 grid grid-cols-2 gap-3">
+              {stats.map((stat, idx) => {
+                const lastIndex = stats.length - 1;
+                return (
+                  <div
+                    key={`${stat.slug}`}
+                    className={`rounded border border-slate-300 p-3 flex flex-col justify-start gap-y-5 ${
+                      idx === lastIndex && "col-span-2"
+                    }`}
+                  >
+                    <stat.icon className="h-5 w-5 text-blue-600" />
+                    <div className="flex flex-col justify-start gap-y-2">
+                      <a className="text-xs text-slate-700">{stat.name}</a>
+                      <span className="text-base font-medium text-slate-950">
+                        {stat.value}
+                      </span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
         </div>
       </div>
 
