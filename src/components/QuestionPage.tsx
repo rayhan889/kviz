@@ -15,10 +15,16 @@ export interface Question {
   type: string;
 }
 
+export interface KeyAnswerAndQuestion {
+  number: number;
+  question: Question;
+  userAnswer: string;
+}
+
 const TOTAL_QUESTIONS = 10;
 const API_URL = `https://opentdb.com/api.php?amount=${TOTAL_QUESTIONS}&category=11&difficulty=easy&type=boolean`;
 
-const API_CATCH_TIME = 5 * 60 * 1000;
+const API_CATCH_TIME_IN_MINUTES = 5 * 60 * 1000;
 const COUNTDOWN_DURATION_MS = 25000;
 
 function decodeHTMLEntities(text: string) {
@@ -36,6 +42,7 @@ export default function QuestionPage() {
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [timesUp, setTimesUp] = useState<boolean>(false);
   const [timeSpent, setTimeSpent] = useState<string>("00m 00s");
+  const [keyAnswers, setKeyAnswers] = useState<KeyAnswerAndQuestion[]>([]);
 
   const quizStartTime = useRef<number | null>(null);
   const quizFinished = useRef<boolean>(false);
@@ -51,13 +58,26 @@ export default function QuestionPage() {
         ...q,
         question: decodeHTMLEntities(q.question),
       }));
-      setCurrentQuestions(data.results);
+      const questions = data.results;
+      setCurrentQuestions(questions);
+
+      const keyAnswers: KeyAnswerAndQuestion[] = [];
+
+      for (let i = 0; i < questions.length; i++) {
+        keyAnswers.push({
+          number: i + 1,
+          question: questions[i].question,
+          userAnswer: "",
+        });
+      }
+
+      setKeyAnswers(keyAnswers);
 
       quizStartTime.current = Date.now();
     },
     {
-      staleTime: API_CATCH_TIME,
-      cacheTime: API_CATCH_TIME,
+      staleTime: API_CATCH_TIME_IN_MINUTES,
+      cacheTime: API_CATCH_TIME_IN_MINUTES,
     }
   );
 
@@ -71,6 +91,7 @@ export default function QuestionPage() {
     setCountRightAnswers(0);
     setCountUserAnswers(0);
     quizFinished.current = false;
+    setKeyAnswers([]);
   }
 
   useEffect(() => {
@@ -89,6 +110,18 @@ export default function QuestionPage() {
       setStartQuizSession(false);
     }
   }, [startQuizSession, timesUp, currentIndex, questions.length]);
+
+  useEffect(() => {
+    if (startQuizSession || keyAnswers.length === 0) {
+      for (let i = 0; i < questions.length; i++) {
+        keyAnswers.push({
+          number: i + 1,
+          question: questions[i],
+          userAnswer: "",
+        });
+      }
+    }
+  }, [startQuizSession]);
 
   function formatTime(ms: number): string {
     const seconds = Math.floor(ms / 1000) % 60;
@@ -109,6 +142,18 @@ export default function QuestionPage() {
 
   function handleCheckAnswer(ans: string) {
     setSelectedAnswer(ans);
+
+    const keyAnswer: KeyAnswerAndQuestion = {
+      number: currentIndex + 1,
+      question: currentQuestion,
+      userAnswer: ans,
+    };
+
+    setKeyAnswers(prev =>
+      prev.map(item =>
+        item.number === keyAnswer.number ? { ...item, userAnswer: ans } : item
+      )
+    );
 
     if (currentIndex > 0) {
       if (currentQuestion.correct_answer == ans) {
@@ -136,6 +181,7 @@ export default function QuestionPage() {
           total_questions={TOTAL_QUESTIONS}
           timeSpent={timeSpent}
           startNewQuizSession={startNewQuizSession}
+          keyAnswers={keyAnswers}
         />
       ) : (
         <>

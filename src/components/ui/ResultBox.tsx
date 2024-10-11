@@ -11,6 +11,7 @@ import {
 } from "react-icons/fi";
 import { LuPencilLine } from "react-icons/lu";
 import React, { useState } from "react";
+import { KeyAnswerAndQuestion } from "../QuestionPage";
 
 interface ResultBoxProps {
   startNewQuizSession: () => void;
@@ -18,6 +19,7 @@ interface ResultBoxProps {
   total_questions_done: number;
   total_questions: number;
   timeSpent: string;
+  keyAnswers: KeyAnswerAndQuestion[];
 }
 
 const ResultBox: React.FC<ResultBoxProps> = ({
@@ -26,6 +28,7 @@ const ResultBox: React.FC<ResultBoxProps> = ({
   total_questions,
   total_questions_done,
   timeSpent,
+  keyAnswers,
 }: ResultBoxProps) => {
   const [collapseStats, setCollapseStats] = useState<boolean>(false);
   const [collapseKeyAnswer, setCollapseKeyAnswer] = useState<boolean>(false);
@@ -111,7 +114,7 @@ const ResultBox: React.FC<ResultBoxProps> = ({
       >
         {/* Score & Stats */}
         <div
-          className={`w-full rounded-lg mb-8 ${
+          className={`w-full rounded-lg ${
             collapseStats && "border border-slate-300"
           } h-auto flex flex-col relative`}
         >
@@ -193,26 +196,55 @@ const ResultBox: React.FC<ResultBoxProps> = ({
             )}
           </div>
           {collapseKeyAnswer && (
-            <div className="p-5 mt-14 grid grid-cols-2 gap-3">
-              {stats.map((stat, idx) => {
-                const lastIndex = stats.length - 1;
-                return (
-                  <div
-                    key={`${stat.slug}`}
-                    className={`rounded border border-slate-300 p-3 flex flex-col justify-start gap-y-5 ${
-                      idx === lastIndex && "col-span-2"
-                    }`}
-                  >
-                    <stat.icon className="h-5 w-5 text-blue-600" />
-                    <div className="flex flex-col justify-start gap-y-2">
-                      <a className="text-xs text-slate-700">{stat.name}</a>
-                      <span className="text-base font-medium text-slate-950">
-                        {stat.value}
-                      </span>
+            <div className="p-5 mt-14 flex flex-col gap-y-3 overflow-y-scroll max-h-[18rem] no-scrollbar">
+              {/* Question */}
+              {keyAnswers?.length > 0 ? (
+                <>
+                  {keyAnswers.map((keyAnswer, idx) => (
+                    <div
+                      key={`key_answer_question_${idx}`}
+                      className="border border-slate-300 rounded p-3 flex flex-col gap-y-3 justify-start"
+                    >
+                      <div className="flex justify-start gap-x-2 text-xs">
+                        <span>{keyAnswer.number}. </span>
+                        <p className=" text-slate-700 line-clamp-3">
+                          {keyAnswer.question.question}
+                        </p>
+                      </div>
+                      <div className="w-full grid grid-cols-2 gap-x-3">
+                        {/* Your answer & Actual answer */}
+                        <div
+                          className={`flex flex-col justify-center p-2 rounded ${
+                            keyAnswer.userAnswer ===
+                            keyAnswer.question.correct_answer
+                              ? "bg-emerald-50"
+                              : "bg-red-50"
+                          }`}
+                        >
+                          <a className="text-xs text-slate-700">Your answer</a>
+                          <span className="text-base font-medium text-slate-950">
+                            {keyAnswer.userAnswer === ""
+                              ? "-"
+                              : keyAnswer.userAnswer}
+                          </span>
+                        </div>
+                        <div className="flex flex-col justify-center p-2 rounded bg-emerald-50">
+                          <a className="text-xs text-slate-700">
+                            Actual Answer
+                          </a>
+                          <span className="text-base font-medium text-slate-950">
+                            {keyAnswer.question.correct_answer}
+                          </span>
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                );
-              })}
+                  ))}
+                </>
+              ) : (
+                <span className="text-xs text-slate-700 w-full text-center">
+                  No key answer found...
+                </span>
+              )}
             </div>
           )}
         </div>
