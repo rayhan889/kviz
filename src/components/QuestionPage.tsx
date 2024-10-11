@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useQuery } from "react-query";
 
 import ProgressBar from "./ui/Progressbar";
@@ -15,8 +15,8 @@ export interface Question {
   type: string;
 }
 
-const API_URL =
-  "https://opentdb.com/api.php?amount=10&category=11&difficulty=easy&type=boolean";
+const TOTAL_QUESTIONS = 10;
+const API_URL = `https://opentdb.com/api.php?amount=${TOTAL_QUESTIONS}&category=11&difficulty=easy&type=boolean`;
 
 const API_CATCH_TIME = 5 * 60 * 1000;
 const COUNTDOWN_DURATION_MS = 25000;
@@ -28,13 +28,17 @@ function decodeHTMLEntities(text: string) {
 }
 
 export default function QuestionPage() {
-  const [startQuizSession, setStartQuestionSession] = useState<boolean>(true);
+  const [startQuizSession, setStartQuizSession] = useState<boolean>(true);
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [questions, setCurrentQuestions] = useState<Question[]>([]);
   const [countRightAnswers, setCountRightAnswers] = useState<number>(0);
+  const [countUserAnswers, setCountUserAnswers] = useState<number>(0);
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [timesUp, setTimesUp] = useState<boolean>(false);
+  const [timeSpent, setTimeSpent] = useState<string>("00m 00s");
 
+  const quizStartTime = useRef<number | null>(null);
+  const quizFinished = useRef<boolean>(false);
   const currentQuestion = questions[currentIndex];
   const indexStartByOne = currentIndex + 1;
 
@@ -48,6 +52,8 @@ export default function QuestionPage() {
         question: decodeHTMLEntities(q.question),
       }));
       setCurrentQuestions(data.results);
+
+      quizStartTime.current = Date.now();
     },
     {
       staleTime: API_CATCH_TIME,
@@ -55,14 +61,44 @@ export default function QuestionPage() {
     }
   );
 
+  function startNewQuizSession() {
+    setStartQuizSession(true);
+    setTimesUp(false);
+    setCurrentIndex(0);
+    setSelectedAnswer(null);
+    setTimeSpent("00m 00s");
+    quizStartTime.current = Date.now();
+    setCountRightAnswers(0);
+    setCountUserAnswers(0);
+    quizFinished.current = false;
+  }
+
   useEffect(() => {
     if (!startQuizSession || timesUp || currentIndex > questions.length - 1) {
-      setCurrentIndex(0);
-      setCountRightAnswers(0);
-      setSelectedAnswer(null);
-      setTimesUp(true);
+      const quizEndTime = Date.now();
+
+      if (!quizFinished.current && quizStartTime.current) {
+        const timeSpentMs = quizEndTime - quizStartTime.current;
+
+        const formattedTime = formatTime(timeSpentMs);
+        setTimeSpent(formattedTime);
+
+        quizFinished.current = true;
+      }
+
+      setStartQuizSession(false);
     }
   }, [startQuizSession, timesUp, currentIndex, questions.length]);
+
+  function formatTime(ms: number): string {
+    const seconds = Math.floor(ms / 1000) % 60;
+    const minutes = Math.floor(ms / (1000 * 60)) % 60;
+
+    return `${String(minutes).padStart(2, "0")}m ${String(seconds).padStart(
+      2,
+      "0"
+    )}s`;
+  }
 
   function handleNextQuestion() {
     if (currentIndex < questions.length) {
@@ -79,6 +115,7 @@ export default function QuestionPage() {
         setCountRightAnswers(prev => prev + 1);
       }
     }
+    setCountUserAnswers(prev => prev + 1);
 
     setTimeout(handleNextQuestion, 1000);
   }
@@ -93,7 +130,13 @@ export default function QuestionPage() {
 
       {!startQuizSession || timesUp || currentIndex > questions.length - 1 ? (
         // Result box
-        <ResultBox setTimesUp={setTimesUp} />
+        <ResultBox
+          correct_answer={countRightAnswers}
+          total_questions_done={countUserAnswers}
+          total_questions={TOTAL_QUESTIONS}
+          timeSpent={timeSpent}
+          startNewQuizSession={startNewQuizSession}
+        />
       ) : (
         <>
           {!isLoading && currentQuestion && (
