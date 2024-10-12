@@ -2,6 +2,7 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { ClerkProvider } from "@clerk/clerk-react";
+import AuthProvider from "./components/AuthProvider.tsx";
 import HomePage from "./pages/HomePage.tsx";
 import QuestionPage from "./pages/QuestionPage.tsx";
 import App from "./App.tsx";
@@ -34,7 +35,9 @@ const router = createBrowserRouter([
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <ClerkProvider publishableKey={PUBLISHABLE_KEY} afterSignOutUrl={"/"}>
-      <RouterProvider router={router} />
+      <AuthProvider isSignedIn={false}>
+        <RouterProvider router={router} />
+      </AuthProvider>
     </ClerkProvider>
   </StrictMode>
 );
