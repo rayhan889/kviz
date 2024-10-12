@@ -176,10 +176,7 @@ export default function QuestionPage() {
   if (error) return <div>Error</div>;
 
   return (
-    <main className="h-screen w-full bg-white flex flex-col items-center justify-center">
-      {/* Background gradient */}
-      <div className="absolute h-60 top-0 left-0 w-full bg-gradient-to-b from-blue-500/20 to-white" />
-
+    <>
       {!startQuizSession || timesUp || currentIndex > questions.length - 1 ? (
         // Result box
         <ResultBox
@@ -232,6 +229,6 @@ export default function QuestionPage() {
           )}
         </>
       )}
-    </main>
+    </>
   );
 }
