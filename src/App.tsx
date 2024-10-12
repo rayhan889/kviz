@@ -4,6 +4,7 @@ import { Routes, Route } from "react-router-dom";
 import QuestionPage from "./components/QuestionPage";
 import HomePage from "./components/HomePage";
 import Navbar from "./components/ui/Navbar";
+import Footer from "./components/ui/Footer";
 
 const queryClient = new QueryClient();
 
@@ -21,6 +22,9 @@ function App() {
           <Route path="/" element={<HomePage />} />
           <Route path="/question" element={<QuestionPage />} />
         </Routes>
+
+        {/* Footer */}
+        <Footer />
       </main>
     </QueryClientProvider>
   );
