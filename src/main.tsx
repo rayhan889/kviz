@@ -3,6 +3,7 @@ import { createRoot } from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { ClerkProvider } from "@clerk/clerk-react";
 import AuthProvider from "./components/AuthProvider.tsx";
+import ProtectedRoute from "./components/ProtectedRoute.tsx";
 import HomePage from "./pages/HomePage.tsx";
 import QuestionPage from "./pages/QuestionPage.tsx";
 import App from "./App.tsx";
@@ -26,7 +27,11 @@ const router = createBrowserRouter([
       },
       {
         path: "question",
-        element: <QuestionPage />,
+        element: (
+          <ProtectedRoute>
+            <QuestionPage />
+          </ProtectedRoute>
+        ),
       },
     ],
   },

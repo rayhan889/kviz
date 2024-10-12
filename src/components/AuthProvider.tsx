@@ -1,9 +1,4 @@
-import React, {
-  createContext,
-  PropsWithChildren,
-  useContext,
-  useState,
-} from "react";
+import React, { createContext, PropsWithChildren, useState } from "react";
 import { User } from "../types/User";
 
 const AuthContext = createContext<User | null>(null);
@@ -21,13 +16,3 @@ const AuthProvider: React.FC<AuthProviderProps> = ({
 };
 
 export default AuthProvider;
-
-export const useAuth = () => {
-  const context = useContext(AuthContext);
-
-  if (context === undefined) {
-    throw new Error("useAuth must be used within a AuthProvider");
-  }
-
-  return context;
-};
