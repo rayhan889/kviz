@@ -2,9 +2,9 @@ import React from "react";
 
 export default function HomePage() {
   return (
-    <div className="flex flex-col gap-y-10 justify-center items-center max-w-[39rem] w-full">
+    <div className="flex flex-col gap-y-10 justify-center items-center max-w-[29rem] lg:max-w-[39rem] w-full">
       <div className="flex flex-col gap-y-4">
-        <h1 className="font-bold text-[3.375rem] text-slate-950 text-center leading-[110%]">
+        <h1 className="font-bold text-[3rem] lg:text-[3.375rem] text-slate-950 text-center leading-[110%]">
           Questions <span className="text-blue-600">Tailored</span>, <br />
           Minds <span className="text-blue-600">Sharpened</span>
         </h1>
