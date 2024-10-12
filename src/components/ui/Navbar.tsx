@@ -1,6 +1,8 @@
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 const Navbar = () => {
+  const location = useLocation();
+
   const navItems = [
     {
       name: "About",
@@ -23,13 +25,18 @@ const Navbar = () => {
           alt="kviz logo"
           className="h-6 w-6"
         />
-        <Link to="/" className="font-bold">
+        <Link to="/" className="font-bold hover:underline">
           kviz.
         </Link>
       </button>
       <ul className="flex items-center gap-x-6">
         {navItems.map((item, idx) => (
-          <li key={`nav_item_${idx}`} className="text-base text-slate-950">
+          <li
+            key={`nav_item_${idx}`}
+            className={`text-base text-slate-500 hover:text-slate-950 transition duration-100 ${
+              location.pathname === item.path && "font-medium text-slate-950"
+            }`}
+          >
             <Link to={item.path}>{item.name}</Link>
           </li>
         ))}
