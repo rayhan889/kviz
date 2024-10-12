@@ -38,10 +38,15 @@ const Navbar = () => {
         </button>
 
         {collapseNavbar ? (
-          <FiMenu
-            className="h-7 w-7 text-slate-950 cursor-pointer"
-            onClick={handleCollapseNavbar}
-          />
+          <div className="flex items-center gap-x-6">
+            <button className="w-[10rem] gap-x-3 text-blue-700 rounded bg-blue-50 px-3 py-2 text-sm border border-blue-700 shadow-md">
+              Sign In
+            </button>
+            <FiMenu
+              className="h-7 w-7 text-slate-950 cursor-pointer"
+              onClick={handleCollapseNavbar}
+            />
+          </div>
         ) : (
           <FiX
             className="h-7 w-7 text-slate-950 cursor-pointer"
