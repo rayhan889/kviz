@@ -34,6 +34,8 @@ const ResultBox: React.FC<ResultBoxProps> = ({
   const [collapseKeyAnswer, setCollapseKeyAnswer] = useState<boolean>(false);
   const wrong_answer = total_questions_done - correct_answer;
 
+  console.log(keyAnswers);
+
   const stats = [
     {
       slug: "correct_answer",
@@ -233,7 +235,9 @@ const ResultBox: React.FC<ResultBoxProps> = ({
                             Actual Answer
                           </a>
                           <span className="text-base font-medium text-slate-950">
-                            {keyAnswer.question.correct_answer}
+                            {keyAnswer.question.correct_answer === ""
+                              ? "-"
+                              : keyAnswer.question.correct_answer}
                           </span>
                         </div>
                       </div>
