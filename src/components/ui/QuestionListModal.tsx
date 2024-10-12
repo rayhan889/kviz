@@ -2,18 +2,48 @@ import React from "react";
 import ReactModal from "react-modal";
 import { IoClose } from "react-icons/io5";
 import { Question } from "../QuestionPage";
+import { KeyAnswerAndQuestion } from "../QuestionPage";
 
 interface QuestionListModalProps {
   questions: Question[];
   isOpen: boolean;
   onClose: () => void;
+  currentIndex: number;
+  keyAnswers: KeyAnswerAndQuestion[];
 }
 
 const QuestionListModal: React.FC<QuestionListModalProps> = ({
   questions,
   isOpen,
   onClose,
+  currentIndex,
+  keyAnswers,
 }: QuestionListModalProps) => {
+  const itemBoxStyle = (index: number) => {
+    const keyAnswer = keyAnswers[index];
+    const question = keyAnswer?.question;
+    const userAnswer = keyAnswer?.userAnswer;
+    const correctAnswer = question?.correct_answer;
+    const incorrectAnswers = question?.incorrect_answer;
+
+    if (!keyAnswer || !question) {
+      return "bg-white";
+    }
+
+    if (userAnswer === correctAnswer) {
+      return "bg-emerald-50";
+    } else if (
+      userAnswer !== "" &&
+      userAnswer !== incorrectAnswers?.[incorrectAnswers.length - 1]
+    ) {
+      return "bg-red-50";
+    } else if (userAnswer === "" && currentIndex === index) {
+      return "bg-slate-200";
+    } else {
+      return "bg-white";
+    }
+  };
+
   return (
     <ReactModal
       isOpen={isOpen}
@@ -29,7 +59,8 @@ const QuestionListModal: React.FC<QuestionListModalProps> = ({
         {questions.map((_, idx) => (
           <div
             key={idx}
-            className="w-[3.125rem] h-11 flex justify-center items-center rounded text-slate-950 border border-slate-300"
+            className={`w-[3.125rem] h-11 flex justify-center items-center rounded text-slate-950 border border-slate-300 
+              ${itemBoxStyle(idx)}`}
           >
             {idx + 1}
           </div>

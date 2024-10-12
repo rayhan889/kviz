@@ -2,6 +2,7 @@ import { useState } from "react";
 import { CiBoxList } from "react-icons/ci";
 import QuestionListModal from "./QuestionListModal";
 import { Question } from "../QuestionPage";
+import { KeyAnswerAndQuestion } from "../QuestionPage";
 
 interface QuestionBoxProps {
   questions: Question[];
@@ -9,6 +10,7 @@ interface QuestionBoxProps {
   currentIndex: number;
   handleCheckAnswer: (ans: string) => void;
   selectedAnswer: string | null;
+  keyAnswers: KeyAnswerAndQuestion[];
 }
 
 const QuestionBox: React.FC<QuestionBoxProps> = ({
@@ -17,6 +19,7 @@ const QuestionBox: React.FC<QuestionBoxProps> = ({
   handleCheckAnswer,
   questions,
   selectedAnswer,
+  keyAnswers,
 }: QuestionBoxProps) => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
@@ -43,9 +46,11 @@ const QuestionBox: React.FC<QuestionBoxProps> = ({
       </button>
 
       <QuestionListModal
+        currentIndex={currentIndex}
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         questions={questions}
+        keyAnswers={keyAnswers}
       />
 
       {/* Question */}

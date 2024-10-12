@@ -226,6 +226,7 @@ export default function QuestionPage() {
                 questions={questions}
                 handleCheckAnswer={handleCheckAnswer}
                 selectedAnswer={selectedAnswer}
+                keyAnswers={keyAnswers}
               />
             </>
           )}
