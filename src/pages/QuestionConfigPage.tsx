@@ -1,12 +1,11 @@
-import { useState } from "react";
 import { FiChevronDown } from "react-icons/fi";
+import { useQuestionConfig } from "../context/context";
+import { useNavigate } from "react-router-dom";
 
 export const QuestionConfigPage = () => {
-  const [questionConfig, setQuestionConfig] = useState({
-    category: "",
-    difficulty: "",
-    amount: 0,
-  });
+  const { questionConfig, setQuestionConfig } = useQuestionConfig();
+
+  const navigate = useNavigate();
 
   const categoryOptions = [
     {
@@ -56,12 +55,15 @@ export const QuestionConfigPage = () => {
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
-    if (
-      questionConfig.category &&
-      questionConfig.difficulty &&
-      questionConfig.amount
-    ) {
-      console.log(questionConfig);
+    if (questionConfig !== undefined) {
+      if (
+        questionConfig.category &&
+        questionConfig.difficulty &&
+        questionConfig.amount
+      ) {
+        console.log("Question config submitted", questionConfig);
+        navigate("/question");
+      }
     }
   }
 
@@ -88,7 +90,7 @@ export const QuestionConfigPage = () => {
             <select
               name="category"
               id="category"
-              value={questionConfig.category}
+              value={questionConfig?.category}
               onChange={handleChangeQuizConfig}
               className="w-full bg-white rounded-lg border border-slate-300 p-6 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm appearance-none"
             >
@@ -112,7 +114,7 @@ export const QuestionConfigPage = () => {
             <select
               name="difficulty"
               id="difficulty"
-              value={questionConfig.difficulty}
+              value={questionConfig?.difficulty}
               onChange={handleChangeQuizConfig}
               className="w-full bg-white rounded-lg border border-slate-300 p-6 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm appearance-none"
             >
@@ -137,7 +139,7 @@ export const QuestionConfigPage = () => {
             name="amount"
             id="amount"
             defaultValue={0}
-            value={questionConfig.amount}
+            value={questionConfig?.amount}
             onChange={handleChangeQuizConfig}
             className="w-full bg-white rounded-lg border border-slate-300 p-6 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm appearance-none"
           />

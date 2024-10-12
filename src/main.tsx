@@ -7,6 +7,7 @@ import ProtectedRoute from "./components/ProtectedRoute.tsx";
 import HomePage from "./pages/HomePage.tsx";
 import QuestionPage from "./pages/QuestionPage.tsx";
 import { QuestionConfigPage } from "./pages/QuestionConfigPage.tsx";
+import { QuestionConfigProvider } from "./context/context.tsx";
 import App from "./App.tsx";
 import "./index.css";
 import "@fontsource-variable/rubik";
@@ -46,7 +47,9 @@ createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <ClerkProvider publishableKey={PUBLISHABLE_KEY} afterSignOutUrl={"/"}>
       <AuthProvider isSignedIn={false}>
-        <RouterProvider router={router} />
+        <QuestionConfigProvider>
+          <RouterProvider router={router} />
+        </QuestionConfigProvider>
       </AuthProvider>
     </ClerkProvider>
   </StrictMode>
