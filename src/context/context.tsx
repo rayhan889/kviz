@@ -9,6 +9,8 @@ import { QuestionConfig } from "../types/QuestionConfig";
 type QuestionConfigContextProps = {
   questionConfig: QuestionConfig | undefined;
   setQuestionConfig: React.Dispatch<React.SetStateAction<QuestionConfig>>;
+  apiUrl: string;
+  setApiUrl: React.Dispatch<React.SetStateAction<string>>;
 };
 
 const QuestionConfigContext = createContext<
@@ -23,10 +25,13 @@ export const QuestionConfigProvider: React.FC<PropsWithChildren> = ({
     difficulty: "",
     amount: 0,
   });
+  const [apiUrl, setApiUrl] = useState<string>(
+    "https://opentdb.com/api.php?amount=10&category=11&difficulty=easy&type=boolean"
+  );
 
   return (
     <QuestionConfigContext.Provider
-      value={{ questionConfig, setQuestionConfig }}
+      value={{ questionConfig, setQuestionConfig, apiUrl, setApiUrl }}
     >
       {children}
     </QuestionConfigContext.Provider>

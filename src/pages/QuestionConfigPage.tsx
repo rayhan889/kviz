@@ -3,7 +3,7 @@ import { useQuestionConfig } from "../context/context";
 import { useNavigate } from "react-router-dom";
 
 export const QuestionConfigPage = () => {
-  const { questionConfig, setQuestionConfig } = useQuestionConfig();
+  const { questionConfig, setQuestionConfig, setApiUrl } = useQuestionConfig();
 
   const navigate = useNavigate();
 
@@ -61,6 +61,9 @@ export const QuestionConfigPage = () => {
         questionConfig.difficulty &&
         questionConfig.amount
       ) {
+        setApiUrl(
+          `https://opentdb.com/api.php?amount=${questionConfig.amount}&category=${questionConfig.category}&difficulty=${questionConfig.difficulty}&type=boolean`
+        );
         console.log("Question config submitted", questionConfig);
         navigate("/question");
       }
