@@ -6,6 +6,7 @@ import AuthProvider from "./components/AuthProvider.tsx";
 import ProtectedRoute from "./components/ProtectedRoute.tsx";
 import HomePage from "./pages/HomePage.tsx";
 import QuestionPage from "./pages/QuestionPage.tsx";
+import { QuestionConfigPage } from "./pages/QuestionConfigPage.tsx";
 import App from "./App.tsx";
 import "./index.css";
 import "@fontsource-variable/rubik";
@@ -32,6 +33,10 @@ const router = createBrowserRouter([
             <QuestionPage />
           </ProtectedRoute>
         ),
+      },
+      {
+        path: "question_config",
+        element: <QuestionConfigPage />,
       },
     ],
   },
