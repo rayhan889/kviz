@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { CiBoxList } from "react-icons/ci";
 import QuestionListModal from "./QuestionListModal";
-import { Question } from "../QuestionPage";
-import { KeyAnswerAndQuestion } from "../QuestionPage";
+import { Question } from "../../pages/QuestionPage";
+import { KeyAnswerAndQuestion } from "../../pages/QuestionPage";
 
 interface QuestionBoxProps {
   questions: Question[];

@@ -1,10 +1,10 @@
 import { useState, useEffect, useRef } from "react";
 import { useQuery } from "react-query";
 
-import ProgressBar from "./ui/Progressbar";
-import CountDown from "./ui/CountDown";
-import QuestionBox from "./ui/QuestionBox";
-import ResultBox from "./ui/ResultBox";
+import ProgressBar from "../components/ui/Progressbar";
+import CountDown from "../components/ui/CountDown";
+import QuestionBox from "../components/ui/QuestionBox";
+import ResultBox from "../components/ui/ResultBox";
 
 export interface Question {
   category: string;

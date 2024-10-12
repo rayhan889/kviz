@@ -11,7 +11,7 @@ import {
 } from "react-icons/fi";
 import { LuPencilLine } from "react-icons/lu";
 import React, { useState } from "react";
-import { KeyAnswerAndQuestion } from "../QuestionPage";
+import { KeyAnswerAndQuestion } from "../../pages/QuestionPage";
 
 interface ResultBoxProps {
   startNewQuizSession: () => void;

@@ -1,8 +1,8 @@
 import { QueryClient, QueryClientProvider } from "react-query";
 import { Routes, Route } from "react-router-dom";
 
-import QuestionPage from "./components/QuestionPage";
-import HomePage from "./components/HomePage";
+import QuestionPage from "./pages/QuestionPage";
+import HomePage from "./pages/HomePage";
 import Navbar from "./components/ui/Navbar";
 import Footer from "./components/ui/Footer";
 
