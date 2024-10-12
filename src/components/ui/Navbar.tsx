@@ -1,6 +1,12 @@
 import { Link, useLocation } from "react-router-dom";
 import { FiMenu, FiX } from "react-icons/fi";
 import { useState } from "react";
+import {
+  SignedIn,
+  SignedOut,
+  SignInButton,
+  UserButton,
+} from "@clerk/clerk-react";
 
 const Navbar = () => {
   const [collapseNavbar, setCollapseNavbar] = useState<boolean>(false);
@@ -30,7 +36,7 @@ const Navbar = () => {
           <img
             src="https://utfs.io/f/K0kPNXk3jrKMN0skWDZ4xSvAf5KFzoCiMj3PRm27hZ9JDyeu"
             alt="kviz logo"
-            className="h-6 w-6"
+            className="h-6 w-6 animate-bounce"
           />
           <Link to="/" className="font-bold hover:underline">
             kviz.
@@ -39,9 +45,16 @@ const Navbar = () => {
 
         {collapseNavbar ? (
           <div className="flex items-center gap-x-6">
-            <button className="w-[10rem] gap-x-3 text-blue-700 rounded bg-blue-50 px-3 py-2 text-sm border border-blue-700 shadow-md">
-              Sign In
-            </button>
+            <SignedOut>
+              <SignInButton>
+                <button className="w-[10rem] gap-x-3 text-blue-700 rounded bg-blue-50 px-3 py-2 text-sm border border-blue-700 shadow-md">
+                  Sign In
+                </button>
+              </SignInButton>
+            </SignedOut>
+            <SignedIn>
+              <UserButton />
+            </SignedIn>
             <FiMenu
               className="h-7 w-7 text-slate-950 cursor-pointer"
               onClick={handleCollapseNavbar}
@@ -85,7 +98,7 @@ const Navbar = () => {
           <img
             src="https://utfs.io/f/K0kPNXk3jrKMN0skWDZ4xSvAf5KFzoCiMj3PRm27hZ9JDyeu"
             alt="kviz logo"
-            className="h-6 w-6"
+            className="h-6 w-6 animate-bounce"
           />
           <Link to="/" className="font-bold hover:underline">
             kviz.
@@ -103,9 +116,16 @@ const Navbar = () => {
             </li>
           ))}
         </ul>
-        <button className="w-[10rem] gap-x-3 text-blue-700 rounded bg-blue-50 px-3 py-2 text-sm border border-blue-700 shadow-md">
-          Sign In
-        </button>
+        <SignedOut>
+          <SignInButton>
+            <button className="w-[10rem] gap-x-3 text-blue-700 rounded bg-blue-50 px-3 py-2 text-sm border border-blue-700 shadow-md">
+              Sign In
+            </button>
+          </SignInButton>
+        </SignedOut>
+        <SignedIn>
+          <UserButton />
+        </SignedIn>
       </nav>
     </>
   );
