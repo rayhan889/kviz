@@ -1,51 +1,42 @@
 import { useState, useEffect, useRef } from "react";
-import { useQuery } from "react-query";
+// import { useQuery } from "react-query";
 
 import ProgressBar from "../components/ui/Progressbar";
 import CountDown from "../components/ui/CountDown";
 import QuestionBox from "../components/ui/QuestionBox";
 import ResultBox from "../components/ui/ResultBox";
-
-export interface Question {
-  category: string;
-  correct_answer: string;
-  difficulty: string;
-  incorrect_answer: [];
-  question: string;
-  type: string;
-}
-
-export interface KeyAnswerAndQuestion {
-  number: number;
-  question: Question;
-  userAnswer: string;
-}
+import { useQuestionConfig } from "../context/context";
+// import { decodeHTMLEntities } from "../helpers/htmlDecoderText";
+// import { Question } from "../types/Question";
+// import { KeyAnswerAndQuestion } from "../types/KeyAnswerAndQuestion";
 
 const TOTAL_QUESTIONS = 10;
-const API_URL = `https://opentdb.com/api.php?amount=${TOTAL_QUESTIONS}&category=11&difficulty=easy&type=boolean`;
+// const API_URL = `https://opentdb.com/api.php?amount=${TOTAL_QUESTIONS}&category=11&difficulty=easy&type=boolean`;
 
-const API_CATCH_TIME_IN_MINUTES = 7 * 60 * 1000;
+// const API_CATCH_TIME_IN_MINUTES = 7 * 60 * 1000;
 const COUNTDOWN_DURATION_MS = 25000;
-
-function decodeHTMLEntities(text: string) {
-  const textArea = document.createElement("textarea");
-  textArea.innerHTML = text;
-  return textArea.value;
-}
 
 export default function QuestionPage() {
   const [startQuizSession, setStartQuizSession] = useState<boolean>(true);
   const [currentIndex, setCurrentIndex] = useState<number>(0);
-  const [questions, setCurrentQuestions] = useState<Question[]>([]);
+  // const [questions, setCurrentQuestions] = useState<Question[]>([]);
   const [countRightAnswers, setCountRightAnswers] = useState<number>(0);
   const [countUserAnswers, setCountUserAnswers] = useState<number>(0);
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [timesUp, setTimesUp] = useState<boolean>(false);
   const [timeSpent, setTimeSpent] = useState<string>("00m 00s");
-  const [keyAnswers, setKeyAnswers] = useState<KeyAnswerAndQuestion[]>([]);
-  const [persistedKeyAnswers, setPersistedKeyAnswers] = useState<
-    KeyAnswerAndQuestion[]
-  >([]);
+  // const [keyAnswers, setKeyAnswers] = useState<KeyAnswerAndQuestion[]>([]);
+  // const [persistedKeyAnswers, setPersistedKeyAnswers] = useState<
+  //   KeyAnswerAndQuestion[]
+  // >([]);
+
+  const {
+    questions,
+    keyAnswers,
+    setKeyAnswers,
+    persistedKeyAnswers,
+    setPersistedKeyAnswers,
+  } = useQuestionConfig();
 
   const quizStartTime = useRef<number | null>(null);
   const quizFinished = useRef<boolean>(false);
@@ -53,42 +44,45 @@ export default function QuestionPage() {
   const currentQuestion = questions[currentIndex];
   const indexStartByOne = currentIndex + 1;
 
-  const { isLoading, error } = useQuery(
-    "questions",
-    async () => {
-      const res = await fetch(API_URL);
-      const data = await res.json();
-      data.results = data.results.map((q: Question) => ({
-        ...q,
-        question: decodeHTMLEntities(q.question),
-      }));
-      const questions = data.results;
-      setCurrentQuestions(questions);
+  // const { isLoading, error } = useQuery(
+  //   "questions",
+  //   async () => {
+  //     const res = await fetch(
+  //       apiUrl ??
+  //         "https://opentdb.com/api.php?amount=10&category=11&difficulty=easy&type=boolean"
+  //     );
+  //     const data = await res.json();
+  //     data.results = data.results.map((q: Question) => ({
+  //       ...q,
+  //       question: decodeHTMLEntities(q.question),
+  //     }));
+  //     const questions = data.results;
+  //     setCurrentQuestions(questions);
 
-      if (!isQuizStarted.current) {
-        const newKeyAnswers: KeyAnswerAndQuestion[] = questions.map(
-          (q: Question, i: number) => ({
-            number: i + 1,
-            question: q,
-            userAnswer: "",
-          })
-        );
-        setKeyAnswers(newKeyAnswers);
-        setPersistedKeyAnswers(newKeyAnswers);
-        isQuizStarted.current = true;
-      }
+  //     if (!isQuizStarted.current) {
+  //       const newKeyAnswers: KeyAnswerAndQuestion[] = questions.map(
+  //         (q: Question, i: number) => ({
+  //           number: i + 1,
+  //           question: q,
+  //           userAnswer: "",
+  //         })
+  //       );
+  //       setKeyAnswers(newKeyAnswers);
+  //       setPersistedKeyAnswers(newKeyAnswers);
+  //       isQuizStarted.current = true;
+  //     }
 
-      setKeyAnswers(keyAnswers);
+  //     setKeyAnswers(keyAnswers);
 
-      console.log("New questions payload", questions);
+  //     console.log("New questions payload", questions);
 
-      quizStartTime.current = Date.now();
-    },
-    {
-      staleTime: API_CATCH_TIME_IN_MINUTES,
-      cacheTime: API_CATCH_TIME_IN_MINUTES,
-    }
-  );
+  //     quizStartTime.current = Date.now();
+  //   },
+  //   {
+  //     staleTime: API_CATCH_TIME_IN_MINUTES,
+  //     cacheTime: API_CATCH_TIME_IN_MINUTES,
+  //   }
+  // );
 
   function startNewQuizSession() {
     setStartQuizSession(true);
@@ -104,6 +98,19 @@ export default function QuestionPage() {
     setPersistedKeyAnswers([]);
     isQuizStarted.current = false;
   }
+
+  useEffect(() => {
+    setStartQuizSession(true);
+    setTimesUp(false);
+    setCurrentIndex(0);
+    setSelectedAnswer(null);
+    setTimeSpent("00m 00s");
+    quizStartTime.current = Date.now();
+    setCountRightAnswers(0);
+    setCountUserAnswers(0);
+    quizFinished.current = false;
+    isQuizStarted.current = false;
+  }, []);
 
   useEffect(() => {
     if (!startQuizSession || timesUp || currentIndex > questions.length - 1) {
@@ -172,8 +179,8 @@ export default function QuestionPage() {
     setTimeout(handleNextQuestion, 1000);
   }
 
-  if (isLoading) return <div>Loading...</div>;
-  if (error) return <div>Error</div>;
+  // if (isLoading) return <div>Loading...</div>;
+  // if (error) return <div>Error</div>;
 
   return (
     <>
@@ -189,7 +196,7 @@ export default function QuestionPage() {
         />
       ) : (
         <>
-          {!isLoading && currentQuestion && (
+          {currentQuestion && (
             <>
               {/* Progress bar */}
               <div className="max-w-[30rem] lg:max-w-[38rem] w-full mb-14 flex flex-col gap-y-2 z-50">

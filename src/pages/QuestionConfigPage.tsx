@@ -1,9 +1,55 @@
+import { useRef, useEffect } from "react";
 import { FiChevronDown } from "react-icons/fi";
 import { useQuestionConfig } from "../context/context";
 import { useNavigate } from "react-router-dom";
+import { useQuery } from "react-query";
+import { decodeHTMLEntities } from "../helpers/htmlDecoderText";
+import { Question } from "../types/Question";
+import { KeyAnswerAndQuestion } from "../types/KeyAnswerAndQuestion";
 
 export const QuestionConfigPage = () => {
-  const { questionConfig, setQuestionConfig, setApiUrl } = useQuestionConfig();
+  const isQuizStarted = useRef<boolean>(false);
+
+  const {
+    questionConfig,
+    setQuestionConfig,
+    setApiUrl,
+    apiUrl,
+    setCurrentQuestions,
+    keyAnswers,
+    setKeyAnswers,
+    setPersistedKeyAnswers,
+  } = useQuestionConfig();
+
+  const { isLoading, error, refetch } = useQuery(
+    "questions",
+    async () => {
+      const res = await fetch(apiUrl);
+      const data = await res.json();
+      data.results = data.results.map((q: Question) => ({
+        ...q,
+        question: decodeHTMLEntities(q.question),
+      }));
+      const questions = data.results;
+      setCurrentQuestions(questions);
+
+      if (!isQuizStarted.current) {
+        const newKeyAnswers: KeyAnswerAndQuestion[] = questions.map(
+          (q: Question, i: number) => ({
+            number: i + 1,
+            question: q,
+            userAnswer: "",
+          })
+        );
+        setKeyAnswers(newKeyAnswers);
+        setPersistedKeyAnswers(newKeyAnswers);
+        isQuizStarted.current = true;
+      }
+
+      setKeyAnswers(keyAnswers);
+    },
+    { enabled: false }
+  );
 
   const navigate = useNavigate();
 
@@ -45,6 +91,17 @@ export const QuestionConfigPage = () => {
     },
   ];
 
+  useEffect(() => {
+    if (
+      questionConfig?.category &&
+      questionConfig?.difficulty &&
+      questionConfig?.amount
+    ) {
+      const newApiUrl = `https://opentdb.com/api.php?amount=${questionConfig.amount}&category=${questionConfig.category}&difficulty=${questionConfig.difficulty}&type=boolean`;
+      setApiUrl(newApiUrl);
+    }
+  }, [questionConfig, setApiUrl]);
+
   function handleChangeQuizConfig(
     e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>
   ) {
@@ -55,17 +112,27 @@ export const QuestionConfigPage = () => {
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
-    if (questionConfig !== undefined) {
+    if (questionConfig) {
       if (
         questionConfig.category &&
         questionConfig.difficulty &&
         questionConfig.amount
       ) {
-        setApiUrl(
-          `https://opentdb.com/api.php?amount=${questionConfig.amount}&category=${questionConfig.category}&difficulty=${questionConfig.difficulty}&type=boolean`
-        );
+        const newApiUrl = `https://opentdb.com/api.php?amount=${questionConfig.amount}&category=${questionConfig.category}&difficulty=${questionConfig.difficulty}&type=boolean`;
+
+        if (newApiUrl !== apiUrl) {
+          console.log("API URL From Config", apiUrl);
+          console.log("New API URL From Config", newApiUrl);
+          setApiUrl(newApiUrl);
+        }
+
         console.log("Question config submitted", questionConfig);
-        navigate("/question");
+
+        refetch().then(() => {
+          if (!isLoading && !error) {
+            navigate("/question");
+          }
+        });
       }
     }
   }
@@ -77,6 +144,9 @@ export const QuestionConfigPage = () => {
       amount: 0,
     });
   }
+
+  if (isLoading) return <div>Loading...</div>;
+  if (error) return <div>Error</div>;
 
   return (
     <form
@@ -157,7 +227,13 @@ export const QuestionConfigPage = () => {
         </button>
         <button
           type="submit"
-          className="w-[12rem] bg-blue-600 text-white text-center py-4 rounded-lg shadow-lg transition duration-300 ease-in-out hover:shadow-xl hover:shadow-blue-300/30 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 active:shadow-inner"
+          disabled={
+            !questionConfig?.difficulty ||
+            !questionConfig?.category ||
+            !questionConfig?.amount ||
+            questionConfig.amount <= 0
+          }
+          className="w-[12rem] bg-blue-600 text-white text-center py-4 rounded-lg shadow-lg transition duration-300 ease-in-out hover:shadow-xl hover:shadow-blue-300/30 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 active:shadow-inner disabled:bg-slate-300 disabled:text-slate-700 disabled:cursor-not-allowed disabled:shadow-none disabled:hover:shadow-none"
         >
           Start Quiz
         </button>
