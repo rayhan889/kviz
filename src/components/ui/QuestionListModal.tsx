@@ -1,8 +1,8 @@
 import React from "react";
 import ReactModal from "react-modal";
 import { IoClose } from "react-icons/io5";
-import { Question } from "../../pages/QuestionPage";
-import { KeyAnswerAndQuestion } from "../../pages/QuestionPage";
+import { Question } from "../../types/Question";
+import { KeyAnswerAndQuestion } from "../../types/KeyAnswerAndQuestion";
 
 interface QuestionListModalProps {
   questions: Question[];
