@@ -6,29 +6,17 @@ import CountDown from "../components/ui/CountDown";
 import QuestionBox from "../components/ui/QuestionBox";
 import ResultBox from "../components/ui/ResultBox";
 import { useQuestionConfig } from "../context/context";
-// import { decodeHTMLEntities } from "../helpers/htmlDecoderText";
-// import { Question } from "../types/Question";
-// import { KeyAnswerAndQuestion } from "../types/KeyAnswerAndQuestion";
 
-const TOTAL_QUESTIONS = 10;
-// const API_URL = `https://opentdb.com/api.php?amount=${TOTAL_QUESTIONS}&category=11&difficulty=easy&type=boolean`;
-
-// const API_CATCH_TIME_IN_MINUTES = 7 * 60 * 1000;
 const COUNTDOWN_DURATION_MS = 25000;
 
 export default function QuestionPage() {
   const [startQuizSession, setStartQuizSession] = useState<boolean>(true);
   const [currentIndex, setCurrentIndex] = useState<number>(0);
-  // const [questions, setCurrentQuestions] = useState<Question[]>([]);
   const [countRightAnswers, setCountRightAnswers] = useState<number>(0);
   const [countUserAnswers, setCountUserAnswers] = useState<number>(0);
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [timesUp, setTimesUp] = useState<boolean>(false);
   const [timeSpent, setTimeSpent] = useState<string>("00m 00s");
-  // const [keyAnswers, setKeyAnswers] = useState<KeyAnswerAndQuestion[]>([]);
-  // const [persistedKeyAnswers, setPersistedKeyAnswers] = useState<
-  //   KeyAnswerAndQuestion[]
-  // >([]);
 
   const {
     questions,
@@ -43,46 +31,6 @@ export default function QuestionPage() {
   const isQuizStarted = useRef<boolean>(false);
   const currentQuestion = questions[currentIndex];
   const indexStartByOne = currentIndex + 1;
-
-  // const { isLoading, error } = useQuery(
-  //   "questions",
-  //   async () => {
-  //     const res = await fetch(
-  //       apiUrl ??
-  //         "https://opentdb.com/api.php?amount=10&category=11&difficulty=easy&type=boolean"
-  //     );
-  //     const data = await res.json();
-  //     data.results = data.results.map((q: Question) => ({
-  //       ...q,
-  //       question: decodeHTMLEntities(q.question),
-  //     }));
-  //     const questions = data.results;
-  //     setCurrentQuestions(questions);
-
-  //     if (!isQuizStarted.current) {
-  //       const newKeyAnswers: KeyAnswerAndQuestion[] = questions.map(
-  //         (q: Question, i: number) => ({
-  //           number: i + 1,
-  //           question: q,
-  //           userAnswer: "",
-  //         })
-  //       );
-  //       setKeyAnswers(newKeyAnswers);
-  //       setPersistedKeyAnswers(newKeyAnswers);
-  //       isQuizStarted.current = true;
-  //     }
-
-  //     setKeyAnswers(keyAnswers);
-
-  //     console.log("New questions payload", questions);
-
-  //     quizStartTime.current = Date.now();
-  //   },
-  //   {
-  //     staleTime: API_CATCH_TIME_IN_MINUTES,
-  //     cacheTime: API_CATCH_TIME_IN_MINUTES,
-  //   }
-  // );
 
   function startNewQuizSession() {
     setStartQuizSession(true);
@@ -179,9 +127,6 @@ export default function QuestionPage() {
     setTimeout(handleNextQuestion, 1000);
   }
 
-  // if (isLoading) return <div>Loading...</div>;
-  // if (error) return <div>Error</div>;
-
   return (
     <>
       {!startQuizSession || timesUp || currentIndex > questions.length - 1 ? (
@@ -189,7 +134,7 @@ export default function QuestionPage() {
         <ResultBox
           correct_answer={countRightAnswers}
           total_questions_done={countUserAnswers}
-          total_questions={TOTAL_QUESTIONS}
+          total_questions={questions.length}
           timeSpent={timeSpent}
           startNewQuizSession={startNewQuizSession}
           keyAnswers={persistedKeyAnswers}
