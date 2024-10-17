@@ -7,7 +7,7 @@ import QuestionBox from "../components/ui/QuestionBox";
 import ResultBox from "../components/ui/ResultBox";
 import { useQuestionConfig } from "../context/context";
 
-const COUNTDOWN_DURATION_MS = 25000;
+const COUNTDOWN_DURATION_MS = 45000;
 
 export default function QuestionPage() {
   const [startQuizSession, setStartQuizSession] = useState<boolean>(true);
@@ -20,6 +20,7 @@ export default function QuestionPage() {
 
   const {
     questions,
+    setCurrentQuestions,
     keyAnswers,
     setKeyAnswers,
     persistedKeyAnswers,
@@ -50,7 +51,17 @@ export default function QuestionPage() {
   useEffect(() => {
     setStartQuizSession(true);
     setTimesUp(false);
-    setCurrentIndex(0);
+
+    const questionsFromLocalStorage = JSON.parse(
+      localStorage.getItem("questions") ?? "[]"
+    );
+    setCurrentQuestions(questionsFromLocalStorage);
+
+    const currentIndexLocalStorage = parseInt(
+      localStorage.getItem("currentIndex") ?? "0"
+    );
+    setCurrentIndex(currentIndexLocalStorage);
+
     setSelectedAnswer(null);
     setTimeSpent("00m 00s");
     quizStartTime.current = Date.now();
@@ -76,6 +87,12 @@ export default function QuestionPage() {
       setStartQuizSession(false);
     }
   }, [startQuizSession, timesUp, currentIndex, questions.length]);
+
+  useEffect(() => {
+    if (currentIndex > 0) {
+      localStorage.setItem("currentIndex", JSON.stringify(currentIndex));
+    }
+  }, [currentIndex]);
 
   useEffect(() => {
     if (startQuizSession && !timesUp && keyAnswers.length === 0) {

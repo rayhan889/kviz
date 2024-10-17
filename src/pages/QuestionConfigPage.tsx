@@ -32,6 +32,7 @@ export const QuestionConfigPage = () => {
       }));
       const questions = data.results;
       setCurrentQuestions(questions);
+      localStorage.setItem("questions", JSON.stringify(questions));
 
       if (!isQuizStarted.current) {
         const newKeyAnswers: KeyAnswerAndQuestion[] = questions.map(
@@ -121,12 +122,8 @@ export const QuestionConfigPage = () => {
         const newApiUrl = `https://opentdb.com/api.php?amount=${questionConfig.amount}&category=${questionConfig.category}&difficulty=${questionConfig.difficulty}&type=boolean`;
 
         if (newApiUrl !== apiUrl) {
-          console.log("API URL From Config", apiUrl);
-          console.log("New API URL From Config", newApiUrl);
           setApiUrl(newApiUrl);
         }
-
-        console.log("Question config submitted", questionConfig);
 
         refetch().then(() => {
           if (!isLoading && !error) {
